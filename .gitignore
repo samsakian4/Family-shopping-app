@@ -1,0 +1,33 @@
+# Flutter/Dart
+.dart_tool/
+.packages
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+*.g.dart
+*.freezed.dart
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Platform
+android/local.properties
+ios/Flutter/flutter_export_environment.sh
+
+# Secrets — never commit real values (08_SECURITY.md)
+.env
+.env.*
+env.json
+*.keystore
+key.properties
+
+# Isar local db files (device-local, never versioned)
+*.isar
+*.isar.lock
+
+# Misc
+.DS_Store
