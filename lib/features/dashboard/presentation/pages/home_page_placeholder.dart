@@ -5,7 +5,8 @@ import 'package:family_shopping_app/core/router/route_paths.dart';
 
 /// Placeholder for the real Dashboard (FT-060). Built out in the
 /// Dashboard phase; kept minimal here so routing/auth guard can be tested.
-/// A settings shortcut is included so Phase 3 (Profile) is reachable.
+/// Shortcuts to Settings and Family are included so those phases are
+/// reachable before the real dashboard/bottom-nav exist.
 class HomePagePlaceholder extends StatelessWidget {
   const HomePagePlaceholder({super.key});
 
@@ -16,7 +17,13 @@ class HomePagePlaceholder extends StatelessWidget {
         title: const Text('داشبورد (به‌زودی)'),
         actions: [
           IconButton(
+            icon: const Icon(Icons.family_restroom_outlined),
+            tooltip: 'خانواده',
+            onPressed: () => context.push(RoutePaths.family),
+          ),
+          IconButton(
             icon: const Icon(Icons.settings_outlined),
+            tooltip: 'تنظیمات',
             onPressed: () => context.push(RoutePaths.settings),
           ),
         ],

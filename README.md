@@ -11,8 +11,9 @@
 
 - [x] Phase 1 — Project Initialization ✅
 - [x] Phase 2 — Authentication ✅
-- [x] Phase 3 — User Profile ✅ (این فاز)
-- [ ] Phase 4 — Family System
+- [x] Phase 3 — User Profile ✅
+- [x] Phase 4 — Family System ✅ (این فاز)
+- [ ] Phase 5 — Shopping Lists
 - [ ] Phase 4 — Family System
 - [ ] Phase 5 — Shopping Lists
 - [ ] Phase 6 — Shopping Items
@@ -97,7 +98,19 @@ features/<name>/
 - Router: مسیرهای `/settings` و `/settings/profile` وصل شدند
 - مقادیر واقعی پروژه Supabase در `scripts/run_dev.sh` / `scripts/build_web.sh`
 
+## چیزی که در فاز ۴ (Family System) ساخته شد
+
+- مایگریشن `003_family_system.sql`: جداول `families` / `family_members` /
+  `invitations` + توابع RPC اتمیک (`create_family`, `join_family_by_code`,
+  `leave_family`, `remove_family_member`, `regenerate_invite_code`) + RLS
+  کامل (شامل گسترش پالیسی `profiles` برای دیدن پروفایل اعضای هم‌خانواده)
+- فیچر `family` کامل: Domain (Entities, Repository, Use Cases)، Data
+  (RPC calls + realtime stream اعضا)، Presentation
+  (`FamilyController`, صفحات Family / Members / Invite)
+- قانون نسخه ۱ اعمال شد: هر کاربر فقط عضو یک خانواده (constraint دیتابیس)
+- Router: مسیرهای `/family`, `/family/members`, `/family/invite`
+
 ## مرحله بعد
 
-فاز ۴ (Family System) — ساخت خانواده، کد دعوت، مدیریت اعضا، طبق
-`docs/16_AUTH.md`، `docs/03_FEATURE_LIST.md` (FT-010 تا FT-013).
+فاز ۵ (Shopping Lists) — لیست‌های شخصی/مشترک، طبق `docs/03_FEATURE_LIST.md`
+(FT-020 تا FT-025) و `docs/05_DATABASE_SCHEMA.md`.

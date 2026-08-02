@@ -14,6 +14,9 @@ import 'package:family_shopping_app/features/auth/presentation/pages/register_pa
 import 'package:family_shopping_app/features/auth/presentation/pages/forgot_password_page.dart';
 import 'package:family_shopping_app/features/settings/presentation/pages/settings_page.dart';
 import 'package:family_shopping_app/features/settings/presentation/pages/profile_settings_page.dart';
+import 'package:family_shopping_app/features/family/presentation/pages/family_page.dart';
+import 'package:family_shopping_app/features/family/presentation/pages/family_members_page.dart';
+import 'package:family_shopping_app/features/family/presentation/pages/family_invite_page.dart';
 
 part 'app_router.g.dart';
 
@@ -79,8 +82,20 @@ GoRouter appRouter(Ref ref) {
         path: RoutePaths.settingsProfile,
         builder: (context, state) => const ProfileSettingsPage(),
       ),
-      // Further routes (/lists, /family, /shopping-mode/:id) are added
-      // feature-by-feature in later phases (12_NAVIGATION.md).
+      GoRoute(
+        path: RoutePaths.family,
+        builder: (context, state) => const FamilyPage(),
+      ),
+      GoRoute(
+        path: RoutePaths.familyMembers,
+        builder: (context, state) => const FamilyMembersPage(),
+      ),
+      GoRoute(
+        path: RoutePaths.familyInvite,
+        builder: (context, state) => const FamilyInvitePage(),
+      ),
+      // Further routes (/lists, /shopping-mode/:id) are added feature-by-
+      // feature in later phases (12_NAVIGATION.md).
     ],
     errorBuilder: (context, state) => const NotFoundPage(),
   );
