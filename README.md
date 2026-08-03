@@ -12,8 +12,9 @@
 - [x] Phase 1 — Project Initialization ✅
 - [x] Phase 2 — Authentication ✅
 - [x] Phase 3 — User Profile ✅
-- [x] Phase 4 — Family System ✅ (این فاز)
-- [ ] Phase 5 — Shopping Lists
+- [x] Phase 4 — Family System ✅
+- [x] Phase 5 — Shopping Lists ✅ (این فاز)
+- [ ] Phase 6 — Shopping Items
 - [ ] Phase 4 — Family System
 - [ ] Phase 5 — Shopping Lists
 - [ ] Phase 6 — Shopping Items
@@ -110,7 +111,19 @@ features/<name>/
 - قانون نسخه ۱ اعمال شد: هر کاربر فقط عضو یک خانواده (constraint دیتابیس)
 - Router: مسیرهای `/family`, `/family/members`, `/family/invite`
 
+## چیزی که در فاز ۵ (Shopping Lists) ساخته شد
+
+- مایگریشن `004_shopping_lists.sql`: جدول `shopping_lists` (شخصی/مشترک) +
+  Soft Delete + توابع RPC (`soft_delete_shopping_list`,
+  `restore_shopping_list`, `permanently_delete_shopping_list`,
+  `purge_expired_trash`) + RLS
+- فیچر `shopping` (بخش لیست‌ها): Domain/Data/Presentation کامل با realtime
+- `ShoppingListsPage` با تب‌های شخصی/مشترک/آرشیو + دیالوگ ساخت لیست
+  (انتخاب نوع فقط اگر عضو خانواده باشید)
+- `TrashPage`: بازیابی/حذف دائم طبق قانون نگهداری ۳۰ روزه (FT-025)
+- صفحه موقت جزئیات لیست (`/lists/detail/:id`) — آیتم‌های خرید در فاز بعد
+
 ## مرحله بعد
 
-فاز ۵ (Shopping Lists) — لیست‌های شخصی/مشترک، طبق `docs/03_FEATURE_LIST.md`
-(FT-020 تا FT-025) و `docs/05_DATABASE_SCHEMA.md`.
+فاز ۶ (Shopping Items) — افزودن/ویرایش/حذف محصول، تیک خریداری‌شده،
+دسته‌بندی، طبق `docs/03_FEATURE_LIST.md` (FT-023) و `docs/05_DATABASE_SCHEMA.md`.

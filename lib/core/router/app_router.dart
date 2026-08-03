@@ -17,6 +17,9 @@ import 'package:family_shopping_app/features/settings/presentation/pages/profile
 import 'package:family_shopping_app/features/family/presentation/pages/family_page.dart';
 import 'package:family_shopping_app/features/family/presentation/pages/family_members_page.dart';
 import 'package:family_shopping_app/features/family/presentation/pages/family_invite_page.dart';
+import 'package:family_shopping_app/features/shopping/presentation/pages/shopping_lists_page.dart';
+import 'package:family_shopping_app/features/shopping/presentation/pages/trash_page.dart';
+import 'package:family_shopping_app/features/shopping/presentation/pages/list_detail_page_placeholder.dart';
 
 part 'app_router.g.dart';
 
@@ -94,8 +97,22 @@ GoRouter appRouter(Ref ref) {
         path: RoutePaths.familyInvite,
         builder: (context, state) => const FamilyInvitePage(),
       ),
-      // Further routes (/lists, /shopping-mode/:id) are added feature-by-
-      // feature in later phases (12_NAVIGATION.md).
+      GoRoute(
+        path: RoutePaths.lists,
+        builder: (context, state) => const ShoppingListsPage(),
+      ),
+      GoRoute(
+        path: RoutePaths.listsTrash,
+        builder: (context, state) => const TrashPage(),
+      ),
+      GoRoute(
+        path: RoutePaths.listDetail,
+        builder: (context, state) => ListDetailPagePlaceholder(
+          listId: state.pathParameters['id'] ?? '',
+        ),
+      ),
+      // Further routes (/shopping-mode/:id) are added feature-by-feature
+      // in later phases (12_NAVIGATION.md).
     ],
     errorBuilder: (context, state) => const NotFoundPage(),
   );

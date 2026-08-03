@@ -11,6 +11,7 @@ class RoutePaths {
 
   static const String home = '/home';
   static const String lists = '/lists';
+  static const String listsTrash = '/lists/trash';
   static const String listDetail = '/lists/detail/:id';
   static const String shoppingMode = '/shopping-mode/:id';
 
