@@ -1,5 +1,6 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import 'package:family_shopping_app/core/local/sync_queue_service.dart';
 import 'package:family_shopping_app/core/usecases/usecase.dart';
 import 'package:family_shopping_app/features/shopping/data/datasources/shopping_list_local_cache.dart';
 import 'package:family_shopping_app/features/shopping/data/datasources/shopping_list_remote_data_source.dart';
@@ -29,6 +30,8 @@ ShoppingListRepository shoppingListRepository(Ref ref) {
     ref.watch(shoppingListRemoteDataSourceProvider),
     ref.watch(networkInfoProvider),
     ref.watch(shoppingListLocalCacheProvider),
+    ref.watch(syncQueueServiceProvider),
+    ref.watch(supabaseClientProvider),
   );
 }
 

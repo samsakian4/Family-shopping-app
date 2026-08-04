@@ -5,6 +5,7 @@ import 'package:family_shopping_app/features/shopping/data/models/shopping_item_
 
 abstract class ShoppingItemRemoteDataSource {
   Future<ShoppingItemModel> addItem({
+    required String id,
     required String shoppingListId,
     required String name,
     required double quantity,
@@ -43,6 +44,7 @@ class ShoppingItemRemoteDataSourceImpl implements ShoppingItemRemoteDataSource {
 
   @override
   Future<ShoppingItemModel> addItem({
+    required String id,
     required String shoppingListId,
     required String name,
     required double quantity,
@@ -56,6 +58,7 @@ class ShoppingItemRemoteDataSourceImpl implements ShoppingItemRemoteDataSource {
       final row = await _client
           .from('shopping_items')
           .insert({
+            'id': id,
             'shopping_list_id': shoppingListId,
             'name': name,
             'quantity': quantity,

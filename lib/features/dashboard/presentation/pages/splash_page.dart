@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:family_shopping_app/core/router/auth_state_provider.dart';
 import 'package:family_shopping_app/core/router/route_paths.dart';
+import 'package:family_shopping_app/features/shopping/presentation/providers/sync_engine_provider.dart';
 
 /// Splash screen: application initialization (12_NAVIGATION.md).
 /// Tasks (as later phases land): load configuration, check auth,
@@ -24,6 +25,9 @@ class _SplashPageState extends ConsumerState<SplashPage> {
   }
 
   Future<void> _init() async {
+    // Start background sync (07_SYNC_ENGINE.md - triggers: "App launch").
+    ref.read(syncEngineProvider).start();
+
     // TODO(auth-feature): await real session restore here.
     final isAuthenticated = ref.read(authStateProvider);
     if (!mounted) return;

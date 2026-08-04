@@ -6,6 +6,7 @@ import 'package:family_shopping_app/features/shopping/domain/entities/shopping_l
 
 abstract class ShoppingListRemoteDataSource {
   Future<ShoppingListModel> createList({
+    required String id,
     required String title,
     required ShoppingListType type,
     String? familyId,
@@ -26,6 +27,7 @@ class ShoppingListRemoteDataSourceImpl implements ShoppingListRemoteDataSource {
 
   @override
   Future<ShoppingListModel> createList({
+    required String id,
     required String title,
     required ShoppingListType type,
     String? familyId,
@@ -36,6 +38,7 @@ class ShoppingListRemoteDataSourceImpl implements ShoppingListRemoteDataSource {
       final row = await _client
           .from('shopping_lists')
           .insert({
+            'id': id,
             'title': title,
             'type': type.name,
             'owner_id': userId,

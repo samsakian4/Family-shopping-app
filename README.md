@@ -15,8 +15,9 @@
 - [x] Phase 4 — Family System ✅
 - [x] Phase 5 — Shopping Lists ✅
 - [x] Phase 6 — Shopping Items ✅
-- [x] Phase 7 — Local Database ✅ (این فاز — فقط خواندن؛ نوشتن آفلاین در فاز ۸)
-- [ ] Phase 8 — Synchronization
+- [x] Phase 7 — Local Database ✅
+- [x] Phase 8 — Synchronization ✅ (این فاز — بدون تشخیص تعارض کامل، جزئیات در Loop Engineering Log)
+- [ ] Phase 9 — Basic Search
 - [ ] Phase 4 — Family System
 - [ ] Phase 5 — Shopping Lists
 - [ ] Phase 6 — Shopping Items
@@ -147,7 +148,23 @@ features/<name>/
 ⚠️ **نوشتن هنوز آفلاین کار نمی‌کند** — این عمداً به فاز ۸ موکول شده (صف
 Sync، Retry، تشخیص/حل تعارض طبق `07_SYNC_ENGINE.md`).
 
+## چیزی که در فاز ۸ (Synchronization) ساخته شد
+
+- معماری خواندن به کش-محور تغییر کرد: UI همیشه از Isar واکنش‌پذیر می‌خواند؛
+  یک subscription پس‌زمینه جریان realtime سرور را به کش merge می‌کند
+  (بدون پاک‌کردن رکوردهای هنوز-sync-نشده)
+- نوشتن آفلاین برای لیست‌ها و آیتم‌ها: هنگام آفلاین بودن، تغییر بلافاصله
+  در کش اعمال و در `SyncQueueEntry` صف می‌شود؛ شناسه رکورد از همان ابتدا
+  (چه آنلاین چه آفلاین) با UUID سمت کلاینت تولید می‌شود تا هیچ‌وقت دو
+  شناسه مختلف برای یک رکورد نداشته باشیم
+- `SyncEngine`: با اتصال مجدد اینترنت یا باز شدن اپ، صف را پردازش و
+  عملیات‌های `create`/`update`/`delete`/`mark_purchased` را به سرور بازپخش
+  می‌کند؛ در خطا شمارنده retry را افزایش می‌دهد
+- نشانگر «N در انتظار ارسال» در صفحه لیست‌ها
+- ⚠️ تشخیص تعارض واقعی (مقایسه updated_at) و Exponential Backoff کامل
+  پیاده نشده — جزئیات و دلیل در `docs/LOOP_ENGINEERING_LOG.md`
+
 ## مرحله بعد
 
-فاز ۸ (Synchronization) — صف نوشتن آفلاین، Retry خودکار، تشخیص و حل
-تعارض، طبق `docs/07_SYNC_ENGINE.md` و `docs/27_LOCAL_DATABASE_AND_OFFLINE_SYNC.md`.
+فاز ۹ (Basic Search) — جستجوی محصول و Autocomplete، طبق
+`docs/03_FEATURE_LIST.md` (FT-030/FT-031) و `docs/17_PRODUCT_SEARCH_AND_AUTOCOMPLETE.md`.

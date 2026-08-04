@@ -4,6 +4,7 @@ import 'package:isar/isar.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'package:family_shopping_app/core/local/sync_queue_service.dart';
 import 'package:family_shopping_app/core/network/network_info.dart';
 import 'package:family_shopping_app/services/secure_storage_service.dart';
 
@@ -48,4 +49,9 @@ Connectivity connectivity(Ref ref) {
 @Riverpod(keepAlive: true)
 NetworkInfo networkInfo(Ref ref) {
   return NetworkInfoImpl(ref.watch(connectivityProvider));
+}
+
+@Riverpod(keepAlive: true)
+SyncQueueService syncQueueService(Ref ref) {
+  return SyncQueueService(ref.watch(isarProvider));
 }

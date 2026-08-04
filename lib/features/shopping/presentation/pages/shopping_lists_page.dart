@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 
 import 'package:family_shopping_app/core/constants/app_spacing.dart';
 import 'package:family_shopping_app/core/router/route_paths.dart';
+import 'package:family_shopping_app/core/local/sync_queue_service.dart';
+import 'package:family_shopping_app/providers/core_providers.dart';
 import 'package:family_shopping_app/features/family/presentation/providers/family_providers.dart';
 import 'package:family_shopping_app/features/shopping/domain/entities/shopping_list_entity.dart';
 import 'package:family_shopping_app/features/shopping/presentation/providers/shopping_list_controller.dart';
@@ -44,6 +46,21 @@ class _ShoppingListsPageState extends ConsumerState<ShoppingListsPage>
       appBar: AppBar(
         title: const Text('لیست‌های خرید'),
         actions: [
+          StreamBuilder<int>(
+            stream: ref.watch(syncQueueServiceProvider).watchPendingCount(),
+            builder: (context, snapshot) {
+              final count = snapshot.data ?? 0;
+              if (count == 0) return const SizedBox.shrink();
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
+                child: Chip(
+                  avatar: const Icon(Icons.cloud_off, size: 16),
+                  label: Text('$count در انتظار ارسال'),
+                  visualDensity: VisualDensity.compact,
+                ),
+              );
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.delete_outline),
             tooltip: 'سطل زباله',
