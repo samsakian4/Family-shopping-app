@@ -1,6 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'package:family_shopping_app/core/usecases/usecase.dart';
+import 'package:family_shopping_app/features/shopping/data/datasources/shopping_list_local_cache.dart';
 import 'package:family_shopping_app/features/shopping/data/datasources/shopping_list_remote_data_source.dart';
 import 'package:family_shopping_app/features/shopping/data/repositories/shopping_list_repository_impl.dart';
 import 'package:family_shopping_app/features/shopping/domain/entities/shopping_list_entity.dart';
@@ -18,10 +19,16 @@ ShoppingListRemoteDataSource shoppingListRemoteDataSource(Ref ref) {
 }
 
 @Riverpod(keepAlive: true)
+ShoppingListLocalCache shoppingListLocalCache(Ref ref) {
+  return ShoppingListLocalCache(ref.watch(isarProvider));
+}
+
+@Riverpod(keepAlive: true)
 ShoppingListRepository shoppingListRepository(Ref ref) {
   return ShoppingListRepositoryImpl(
     ref.watch(shoppingListRemoteDataSourceProvider),
     ref.watch(networkInfoProvider),
+    ref.watch(shoppingListLocalCacheProvider),
   );
 }
 

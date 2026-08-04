@@ -1,7 +1,9 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'package:family_shopping_app/core/usecases/usecase.dart';
+import 'package:family_shopping_app/features/shopping/data/datasources/category_local_cache.dart';
 import 'package:family_shopping_app/features/shopping/data/datasources/category_remote_data_source.dart';
+import 'package:family_shopping_app/features/shopping/data/datasources/shopping_item_local_cache.dart';
 import 'package:family_shopping_app/features/shopping/data/datasources/shopping_item_remote_data_source.dart';
 import 'package:family_shopping_app/features/shopping/data/repositories/category_repository_impl.dart';
 import 'package:family_shopping_app/features/shopping/data/repositories/shopping_item_repository_impl.dart';
@@ -21,10 +23,16 @@ CategoryRemoteDataSource categoryRemoteDataSource(Ref ref) {
 }
 
 @Riverpod(keepAlive: true)
+CategoryLocalCache categoryLocalCache(Ref ref) {
+  return CategoryLocalCache(ref.watch(isarProvider));
+}
+
+@Riverpod(keepAlive: true)
 CategoryRepository categoryRepository(Ref ref) {
   return CategoryRepositoryImpl(
     ref.watch(categoryRemoteDataSourceProvider),
     ref.watch(networkInfoProvider),
+    ref.watch(categoryLocalCacheProvider),
   );
 }
 
@@ -34,10 +42,16 @@ ShoppingItemRemoteDataSource shoppingItemRemoteDataSource(Ref ref) {
 }
 
 @Riverpod(keepAlive: true)
+ShoppingItemLocalCache shoppingItemLocalCache(Ref ref) {
+  return ShoppingItemLocalCache(ref.watch(isarProvider));
+}
+
+@Riverpod(keepAlive: true)
 ShoppingItemRepository shoppingItemRepository(Ref ref) {
   return ShoppingItemRepositoryImpl(
     ref.watch(shoppingItemRemoteDataSourceProvider),
     ref.watch(networkInfoProvider),
+    ref.watch(shoppingItemLocalCacheProvider),
   );
 }
 

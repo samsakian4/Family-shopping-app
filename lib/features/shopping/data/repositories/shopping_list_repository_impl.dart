@@ -4,6 +4,7 @@ import 'package:family_shopping_app/core/errors/exceptions.dart';
 import 'package:family_shopping_app/core/errors/failures.dart';
 import 'package:family_shopping_app/core/network/network_info.dart';
 import 'package:family_shopping_app/core/utils/typedefs.dart';
+import 'package:family_shopping_app/features/shopping/data/datasources/shopping_list_local_cache.dart';
 import 'package:family_shopping_app/features/shopping/data/datasources/shopping_list_remote_data_source.dart';
 import 'package:family_shopping_app/features/shopping/domain/entities/shopping_list_entity.dart';
 import 'package:family_shopping_app/features/shopping/domain/repositories/shopping_list_repository.dart';
@@ -11,8 +12,9 @@ import 'package:family_shopping_app/features/shopping/domain/repositories/shoppi
 class ShoppingListRepositoryImpl implements ShoppingListRepository {
   final ShoppingListRemoteDataSource _remote;
   final NetworkInfo _networkInfo;
+  final ShoppingListLocalCache _cache;
 
-  ShoppingListRepositoryImpl(this._remote, this._networkInfo);
+  ShoppingListRepositoryImpl(this._remote, this._networkInfo, this._cache);
 
   @override
   ResultFuture<ShoppingListEntity> createList({
@@ -63,7 +65,18 @@ class ShoppingListRepositoryImpl implements ShoppingListRepository {
   }
 
   @override
-  Stream<List<ShoppingListEntity>> watchMyLists() => _remote.watchMyLists();
+  Stream<List<ShoppingListEntity>> watchMyLists() async* {
+    // Offline-first read (27_LOCAL_DATABASE_AND_OFFLINE_SYNC.md - "Local
+    // database is always written first. UI always reflects local data.").
+    yield await _cache.getCached();
+
+    if (!await _networkInfo.isConnected) return;
+
+    await for (final remoteLists in _remote.watchMyLists()) {
+      await _cache.replaceAll(remoteLists);
+      yield remoteLists;
+    }
+  }
 
   Future<Either<Failure, void>> _guard(Future<void> Function() action) async {
     if (!await _networkInfo.isConnected) return const Left(NetworkFailure());

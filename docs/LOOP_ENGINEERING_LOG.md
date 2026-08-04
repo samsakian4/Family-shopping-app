@@ -76,6 +76,34 @@ SDK و pub.dev دسترسی ندارد، `flutter analyze` / `flutter test` وا
 
 ---
 
+## فاز ۷ — Local Database (Isar)
+
+| # | بررسی | نتیجه |
+|---|--------|--------|
+| 1 | همه import های داخلی سالم | ✅ |
+| 2 | هر ۴ کالکشن (`ShoppingListLocal`, `ShoppingItemLocal`, `CategoryLocal`, `SyncQueueEntry`) در `AppDatabase.open()` ثبت شده‌اند | ✅ |
+| 3 | `isarProvider` دقیقاً یک‌بار در `main.dart` با `overrideWithValue` مقداردهی می‌شود، قبل از `runApp` | ✅ |
+| 4 | سازنده‌ی هر سه Repository (List/Item/Category) با امضای جدید (remote + networkInfo + cache) در پروایدرهای مربوطه فراخوانی شده | ✅ |
+| 5 | تست واحد رفت‌وبرگشت نگاشت `Entity <-> Local` برای لیست و آیتم (بدون نیاز به باز کردن دیتابیس واقعی) | ✅ اضافه شد در `test/unit/core/local_cache_mapping_test.dart` |
+
+نکات طراحی مهم:
+- خواندن اکنون offline-first است: `watchMyLists()`/`watchItems()`/`getCategories()`
+  ابتدا از کش Isar می‌خوانند، سپس اگر آنلاین باشد جریان realtime سرور را
+  دنبال کرده و کش را write-through بروزرسانی می‌کنند.
+- **نوشتن هنوز offline-first نیست** — `create/update/delete` مستقیماً به
+  Supabase می‌روند و اگر آفلاین باشید خطا می‌گیرید. صف `SyncQueueEntry`
+  فقط تعریف شده؛ منطق enqueue/retry/conflict resolution در **فاز ۸
+  (Synchronization)** پیاده می‌شود — این تفکیک عمداً همان چیزی است که
+  `35_MILESTONE_1.md` بین Phase 7 و Phase 8 قائل شده.
+
+باقی‌مانده برای تست دستی روی محیط واقعی:
+
+- [ ] اجرای `dart run build_runner build` برای تولید `*.g.dart` مربوط به Isar (اینجا در دسترس نیست)
+- [ ] تست دستی: باز کردن اپ آفلاین بعد از یک بار آنلاین بودن → دیدن لیست‌ها/آیتم‌های کش‌شده
+- [ ] تست دستی: تلاش برای ساخت لیست در حالت آفلاین → باید خطای «اتصال اینترنت برقرار نیست» نمایش داده شود (چون نوشتن هنوز صف نمی‌شود)
+
+---
+
 ## فاز ۱–۳ (بازبینی گذشته‌نگر خلاصه)
 
 در زمان ساخت فازهای ۱ تا ۳ این لاگ هنوز وجود نداشت. بازبینی خلاصه انجام‌شده:

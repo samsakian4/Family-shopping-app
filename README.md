@@ -14,8 +14,9 @@
 - [x] Phase 3 — User Profile ✅
 - [x] Phase 4 — Family System ✅
 - [x] Phase 5 — Shopping Lists ✅
-- [x] Phase 6 — Shopping Items ✅ (این فاز)
-- [ ] Phase 7 — Local Database (Isar)
+- [x] Phase 6 — Shopping Items ✅
+- [x] Phase 7 — Local Database ✅ (این فاز — فقط خواندن؛ نوشتن آفلاین در فاز ۸)
+- [ ] Phase 8 — Synchronization
 - [ ] Phase 4 — Family System
 - [ ] Phase 5 — Shopping Lists
 - [ ] Phase 6 — Shopping Items
@@ -134,7 +135,19 @@ features/<name>/
   چک‌باکس تیک زدن، حذف، برآورد کل لیست
 - Bottom sheet افزودن محصول: نام، تعداد، قیمت تخمینی اختیاری، دسته‌بندی
 
+## چیزی که در فاز ۷ (Local Database) ساخته شد
+
+- راه‌اندازی Isar (`AppDatabase.open()`) با ۴ کالکشن: `ShoppingListLocal`,
+  `ShoppingItemLocal`, `CategoryLocal`, `SyncQueueEntry`
+- کش سه‌گانه (List/Item/Category) با الگوی write-through: خواندن
+  offline-first (ابتدا کش، سپس بروزرسانی از realtime سرور)
+- `isarProvider` در `main.dart` پیش از `runApp` مقداردهی می‌شود
+- تست واحد نگاشت رفت‌وبرگشت Entity↔Local
+
+⚠️ **نوشتن هنوز آفلاین کار نمی‌کند** — این عمداً به فاز ۸ موکول شده (صف
+Sync، Retry، تشخیص/حل تعارض طبق `07_SYNC_ENGINE.md`).
+
 ## مرحله بعد
 
-فاز ۷ (Local Database / Isar) — ذخیره‌سازی محلی برای حالت آفلاین، طبق
-`docs/27_LOCAL_DATABASE_AND_OFFLINE_SYNC.md`.
+فاز ۸ (Synchronization) — صف نوشتن آفلاین، Retry خودکار، تشخیص و حل
+تعارض، طبق `docs/07_SYNC_ENGINE.md` و `docs/27_LOCAL_DATABASE_AND_OFFLINE_SYNC.md`.

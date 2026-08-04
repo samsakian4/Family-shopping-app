@@ -4,6 +4,7 @@ import 'package:family_shopping_app/core/errors/exceptions.dart';
 import 'package:family_shopping_app/core/errors/failures.dart';
 import 'package:family_shopping_app/core/network/network_info.dart';
 import 'package:family_shopping_app/core/utils/typedefs.dart';
+import 'package:family_shopping_app/features/shopping/data/datasources/shopping_item_local_cache.dart';
 import 'package:family_shopping_app/features/shopping/data/datasources/shopping_item_remote_data_source.dart';
 import 'package:family_shopping_app/features/shopping/domain/entities/shopping_item_entity.dart';
 import 'package:family_shopping_app/features/shopping/domain/repositories/shopping_item_repository.dart';
@@ -11,8 +12,9 @@ import 'package:family_shopping_app/features/shopping/domain/repositories/shoppi
 class ShoppingItemRepositoryImpl implements ShoppingItemRepository {
   final ShoppingItemRemoteDataSource _remote;
   final NetworkInfo _networkInfo;
+  final ShoppingItemLocalCache _cache;
 
-  ShoppingItemRepositoryImpl(this._remote, this._networkInfo);
+  ShoppingItemRepositoryImpl(this._remote, this._networkInfo, this._cache);
 
   @override
   ResultFuture<ShoppingItemEntity> addItem({
@@ -82,8 +84,15 @@ class ShoppingItemRepositoryImpl implements ShoppingItemRepository {
           ));
 
   @override
-  Stream<List<ShoppingItemEntity>> watchItems({required String shoppingListId}) {
-    return _remote.watchItems(shoppingListId: shoppingListId);
+  Stream<List<ShoppingItemEntity>> watchItems({required String shoppingListId}) async* {
+    yield await _cache.getCached(shoppingListId);
+
+    if (!await _networkInfo.isConnected) return;
+
+    await for (final remoteItems in _remote.watchItems(shoppingListId: shoppingListId)) {
+      await _cache.replaceForList(shoppingListId, remoteItems);
+      yield remoteItems;
+    }
   }
 
   Future<Either<Failure, void>> _guard(Future<void> Function() action) async {
