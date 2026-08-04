@@ -19,7 +19,7 @@ import 'package:family_shopping_app/features/family/presentation/pages/family_me
 import 'package:family_shopping_app/features/family/presentation/pages/family_invite_page.dart';
 import 'package:family_shopping_app/features/shopping/presentation/pages/shopping_lists_page.dart';
 import 'package:family_shopping_app/features/shopping/presentation/pages/trash_page.dart';
-import 'package:family_shopping_app/features/shopping/presentation/pages/list_detail_page_placeholder.dart';
+import 'package:family_shopping_app/features/shopping/presentation/pages/list_detail_page.dart';
 
 part 'app_router.g.dart';
 
@@ -107,7 +107,7 @@ GoRouter appRouter(Ref ref) {
       ),
       GoRoute(
         path: RoutePaths.listDetail,
-        builder: (context, state) => ListDetailPagePlaceholder(
+        builder: (context, state) => ListDetailPage(
           listId: state.pathParameters['id'] ?? '',
         ),
       ),

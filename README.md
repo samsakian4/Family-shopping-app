@@ -13,8 +13,9 @@
 - [x] Phase 2 — Authentication ✅
 - [x] Phase 3 — User Profile ✅
 - [x] Phase 4 — Family System ✅
-- [x] Phase 5 — Shopping Lists ✅ (این فاز)
-- [ ] Phase 6 — Shopping Items
+- [x] Phase 5 — Shopping Lists ✅
+- [x] Phase 6 — Shopping Items ✅ (این فاز)
+- [ ] Phase 7 — Local Database (Isar)
 - [ ] Phase 4 — Family System
 - [ ] Phase 5 — Shopping Lists
 - [ ] Phase 6 — Shopping Items
@@ -123,7 +124,17 @@ features/<name>/
 - `TrashPage`: بازیابی/حذف دائم طبق قانون نگهداری ۳۰ روزه (FT-025)
 - صفحه موقت جزئیات لیست (`/lists/detail/:id`) — آیتم‌های خرید در فاز بعد
 
+## چیزی که در فاز ۶ (Shopping Items) ساخته شد
+
+- مایگریشن `005_shopping_items.sql`: جداول `categories` (با seed دسته‌بندی
+  پیش‌فرض) و `shopping_items` + RLS مبتنی بر مالکیت لیست والد + تابع RPC
+  `mark_item_purchased` + تریگر خودکار بروزرسانی `estimated_total` لیست
+- فیچر آیتم‌های خرید کامل: Domain/Data/Presentation با realtime
+- `ListDetailPage` واقعی (جایگزین placeholder): آیتم‌های در انتظار/خریداری‌شده،
+  چک‌باکس تیک زدن، حذف، برآورد کل لیست
+- Bottom sheet افزودن محصول: نام، تعداد، قیمت تخمینی اختیاری، دسته‌بندی
+
 ## مرحله بعد
 
-فاز ۶ (Shopping Items) — افزودن/ویرایش/حذف محصول، تیک خریداری‌شده،
-دسته‌بندی، طبق `docs/03_FEATURE_LIST.md` (FT-023) و `docs/05_DATABASE_SCHEMA.md`.
+فاز ۷ (Local Database / Isar) — ذخیره‌سازی محلی برای حالت آفلاین، طبق
+`docs/27_LOCAL_DATABASE_AND_OFFLINE_SYNC.md`.
