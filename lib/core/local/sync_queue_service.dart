@@ -64,4 +64,40 @@ class SyncQueueService {
       await _isar.syncQueueEntrys.put(entry);
     });
   }
+
+  /// The server changed this entity after our offline edit's base version
+  /// — stop auto-retrying and surface it for the user to resolve
+  /// (07_SYNC_ENGINE.md - Conflict Detection: "If automatic resolution is
+  /// impossible: Preserve both versions. Prompt the user to choose.").
+  Future<void> markConflict(SyncQueueEntry entry) async {
+    await _isar.writeTxn(() async {
+      entry.status = SyncQueueStatus.conflict;
+      entry.updatedAt = DateTime.now();
+      await _isar.syncQueueEntrys.put(entry);
+    });
+  }
+
+  Stream<List<SyncQueueEntry>> watchConflicts() {
+    return _isar.syncQueueEntrys
+        .filter()
+        .statusEqualTo(SyncQueueStatus.conflict)
+        .watch(fireImmediately: true);
+  }
+
+  /// Re-queues a conflicted entry as pending again — used when the user
+  /// picks "keep my change" and wants it retried.
+  Future<void> requeue(SyncQueueEntry entry) async {
+    await _isar.writeTxn(() async {
+      entry.status = SyncQueueStatus.pending;
+      entry.retryCount = 0;
+      entry.updatedAt = DateTime.now();
+      await _isar.syncQueueEntrys.put(entry);
+    });
+  }
+
+  Future<void> discard(Id id) async {
+    await _isar.writeTxn(() async {
+      await _isar.syncQueueEntrys.delete(id);
+    });
+  }
 }

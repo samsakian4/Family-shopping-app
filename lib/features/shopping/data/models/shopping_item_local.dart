@@ -27,6 +27,7 @@ class ShoppingItemLocal {
   double? purchasedPrice;
   late bool purchased;
   late int sortOrder;
+  late DateTime updatedAt;
 
   @enumerated
   SyncStatus syncStatus = SyncStatus.synced;
@@ -44,6 +45,7 @@ class ShoppingItemLocal {
         purchasedPrice: purchasedPrice,
         purchased: purchased,
         sortOrder: sortOrder,
+        updatedAt: updatedAt,
       );
 
   static ShoppingItemLocal fromEntity(ShoppingItemEntity e) => ShoppingItemLocal()
@@ -59,5 +61,6 @@ class ShoppingItemLocal {
     ..purchasedPrice = e.purchasedPrice
     ..purchased = e.purchased
     ..sortOrder = e.sortOrder
+    ..updatedAt = e.updatedAt
     ..syncStatus = SyncStatus.synced;
 }

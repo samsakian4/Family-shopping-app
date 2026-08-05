@@ -6,6 +6,7 @@ import 'package:family_shopping_app/core/constants/app_spacing.dart';
 import 'package:family_shopping_app/core/router/route_paths.dart';
 import 'package:family_shopping_app/core/local/sync_queue_service.dart';
 import 'package:family_shopping_app/providers/core_providers.dart';
+import 'package:family_shopping_app/features/shopping/presentation/providers/sync_engine_provider.dart';
 import 'package:family_shopping_app/features/family/presentation/providers/family_providers.dart';
 import 'package:family_shopping_app/features/shopping/domain/entities/shopping_list_entity.dart';
 import 'package:family_shopping_app/features/shopping/presentation/providers/shopping_list_controller.dart';
@@ -58,6 +59,21 @@ class _ShoppingListsPageState extends ConsumerState<ShoppingListsPage>
                   label: Text('$count در انتظار ارسال'),
                   visualDensity: VisualDensity.compact,
                 ),
+              );
+            },
+          ),
+          Consumer(
+            builder: (context, ref, _) {
+              final conflictsAsync = ref.watch(syncConflictsProvider);
+              final count = conflictsAsync.valueOrNull?.length ?? 0;
+              if (count == 0) return const SizedBox.shrink();
+              return IconButton(
+                icon: Badge(
+                  label: Text('$count'),
+                  child: const Icon(Icons.warning_amber_outlined, color: Colors.orange),
+                ),
+                tooltip: 'تعارض‌های همگام‌سازی',
+                onPressed: () => context.push(RoutePaths.listsConflicts),
               );
             },
           ),

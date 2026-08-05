@@ -45,7 +45,7 @@ void main() {
 
   group('ShoppingItemLocal <-> ShoppingItemEntity round trip', () {
     test('fromEntity/toEntity preserves all fields', () {
-      const entity = ShoppingItemEntity(
+      final entity = ShoppingItemEntity(
         id: 'i1',
         shoppingListId: 'l1',
         categoryId: 'c1',
@@ -58,6 +58,7 @@ void main() {
         purchasedPrice: 43000,
         purchased: true,
         sortOrder: 3,
+        updatedAt: DateTime(2026, 8, 1),
       );
 
       final roundTripped = ShoppingItemLocal.fromEntity(entity).toEntity();

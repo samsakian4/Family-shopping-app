@@ -36,6 +36,9 @@ abstract class ShoppingItemRemoteDataSource {
   });
 
   Stream<List<ShoppingItemModel>> watchItems({required String shoppingListId});
+
+  /// See [ShoppingListRemoteDataSource.getById] — same purpose, for items.
+  Future<ShoppingItemModel?> getById(String id);
 }
 
 class ShoppingItemRemoteDataSourceImpl implements ShoppingItemRemoteDataSource {
@@ -125,6 +128,16 @@ class ShoppingItemRemoteDataSourceImpl implements ShoppingItemRemoteDataSource {
         'p_purchased': purchased,
         'p_purchased_price': purchasedPrice,
       });
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<ShoppingItemModel?> getById(String id) async {
+    try {
+      final row = await _client.from('shopping_items').select().eq('id', id).maybeSingle();
+      return row == null ? null : ShoppingItemModel.fromJson(row);
     } catch (e) {
       throw ServerException(e.toString());
     }

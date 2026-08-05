@@ -13,13 +13,14 @@ class MockShoppingItemRepository extends Mock implements ShoppingItemRepository 
 void main() {
   late MockShoppingItemRepository repository;
 
-  const fakeItem = ShoppingItemEntity(
+  final fakeItem = ShoppingItemEntity(
     id: 'i1',
     shoppingListId: 'l1',
     name: 'شیر',
     quantity: 2,
     purchased: false,
     sortOrder: 0,
+    updatedAt: DateTime(2026),
   );
 
   setUp(() => repository = MockShoppingItemRepository());
@@ -52,13 +53,13 @@ void main() {
             brand: any(named: 'brand'),
             notes: any(named: 'notes'),
             estimatedPrice: any(named: 'estimatedPrice'),
-          )).thenAnswer((_) async => const Right(fakeItem));
+          )).thenAnswer((_) async => Right(fakeItem));
 
       final result = await useCase(
         const AddItemParams(shoppingListId: 'l1', name: '  شیر  ', quantity: 2),
       );
 
-      expect(result, const Right<Failure, ShoppingItemEntity>(fakeItem));
+      expect(result, Right<Failure, ShoppingItemEntity>(fakeItem));
       verify(() => repository.addItem(
             shoppingListId: 'l1',
             name: 'شیر',

@@ -91,6 +91,7 @@ class ShoppingItemRepositoryImpl implements ShoppingItemRepository {
       estimatedPrice: estimatedPrice,
       purchased: false,
       sortOrder: 0,
+      updatedAt: DateTime.now(),
     );
     await _cache.upsert(entity, status: SyncStatus.pending);
     await _syncQueue.enqueue(
@@ -146,6 +147,7 @@ class ShoppingItemRepositoryImpl implements ShoppingItemRepository {
         purchasedPrice: e.purchasedPrice,
         purchased: e.purchased,
         sortOrder: e.sortOrder,
+        updatedAt: DateTime.now(),
       ),
       remoteCall: () => _remote.updateItem(
         itemId: itemId,
@@ -182,6 +184,7 @@ class ShoppingItemRepositoryImpl implements ShoppingItemRepository {
         purchasedPrice: purchased ? purchasedPrice : null,
         purchased: purchased,
         sortOrder: e.sortOrder,
+        updatedAt: DateTime.now(),
       ),
       remoteCall: () => _remote.setPurchased(
         itemId: itemId,
@@ -256,7 +259,12 @@ class ShoppingItemRepositoryImpl implements ShoppingItemRepository {
       entityType: 'shopping_item',
       entityId: itemId,
       operation: operationOverride,
-      payload: payload,
+      // base_updated_at lets the sync engine detect if someone else
+      // changed this item on the server after our offline edit started
+      // (07_SYNC_ENGINE.md - Conflict Detection). Only meaningful for
+      // 'update'; harmless extra key for 'mark_purchased' (safe-merge
+      // field, sync engine never checks it for that operation).
+      payload: {...payload, 'base_updated_at': current.updatedAt.toIso8601String()},
     );
     return const Right(null);
   }

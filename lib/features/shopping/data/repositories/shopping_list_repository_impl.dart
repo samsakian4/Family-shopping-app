@@ -229,7 +229,10 @@ class ShoppingListRepositoryImpl implements ShoppingListRepository {
       entityType: 'shopping_list',
       entityId: listId,
       operation: 'update',
-      payload: payload,
+      // base_updated_at lets the sync engine detect if someone else
+      // changed this list on the server after our offline edit started
+      // (07_SYNC_ENGINE.md - Conflict Detection).
+      payload: {...payload, 'base_updated_at': current.first.updatedAt.toIso8601String()},
     );
     return const Right(null);
   }

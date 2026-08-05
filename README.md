@@ -16,7 +16,7 @@
 - [x] Phase 5 — Shopping Lists ✅
 - [x] Phase 6 — Shopping Items ✅
 - [x] Phase 7 — Local Database ✅
-- [x] Phase 8 — Synchronization ✅ (این فاز — بدون تشخیص تعارض کامل، جزئیات در Loop Engineering Log)
+- [x] Phase 8 — Synchronization ✅ (شامل تشخیص تعارض واقعی — جزئیات در Loop Engineering Log)
 - [ ] Phase 9 — Basic Search
 - [ ] Phase 4 — Family System
 - [ ] Phase 5 — Shopping Lists
@@ -160,9 +160,14 @@ Sync، Retry، تشخیص/حل تعارض طبق `07_SYNC_ENGINE.md`).
 - `SyncEngine`: با اتصال مجدد اینترنت یا باز شدن اپ، صف را پردازش و
   عملیات‌های `create`/`update`/`delete`/`mark_purchased` را به سرور بازپخش
   می‌کند؛ در خطا شمارنده retry را افزایش می‌دهد
-- نشانگر «N در انتظار ارسال» در صفحه لیست‌ها
-- ⚠️ تشخیص تعارض واقعی (مقایسه updated_at) و Exponential Backoff کامل
-  پیاده نشده — جزئیات و دلیل در `docs/LOOP_ENGINEERING_LOG.md`
+- **تشخیص تعارض واقعی**: هر ویرایش صف‌شده `updated_at` پایه‌اش را حمل
+  می‌کند؛ قبل از اعمال، `SyncEngine` نسخه فعلی سرور را می‌گیرد و مقایسه
+  می‌کند — در صورت تعارض به‌جای Overwrite خاموش، صف‌ورودی `conflict`
+  می‌شود و کاربر از صفحه `/lists/conflicts` تصمیم می‌گیرد
+  (نگه‌داشتن تغییر خودش یا نسخه سرور)
+- نشانگر «N در انتظار ارسال» و نشان هشدار تعارض در صفحه لیست‌ها
+- ⚠️ Merge خودکار فیلد-به-فیلد و Exponential Backoff کامل هنوز پیاده
+  نشده — جزئیات در `docs/LOOP_ENGINEERING_LOG.md`
 
 ## مرحله بعد
 

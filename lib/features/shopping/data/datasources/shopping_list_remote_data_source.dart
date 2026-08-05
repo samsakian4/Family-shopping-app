@@ -18,6 +18,12 @@ abstract class ShoppingListRemoteDataSource {
   Future<void> permanentlyDeleteList({required String listId});
   Future<List<ShoppingListModel>> getTrashedLists();
   Stream<List<ShoppingListModel>> watchMyLists();
+
+  /// Fetches the current server state of a single list — used by
+  /// [SyncEngine] to compare `updated_at` before replaying a queued
+  /// offline edit (07_SYNC_ENGINE.md - Conflict Detection). Returns null
+  /// if the row no longer exists (e.g. deleted by someone else).
+  Future<ShoppingListModel?> getById(String id);
 }
 
 class ShoppingListRemoteDataSourceImpl implements ShoppingListRemoteDataSource {
@@ -108,6 +114,17 @@ class ShoppingListRemoteDataSourceImpl implements ShoppingListRemoteDataSource {
       return (rows as List)
           .map((r) => ShoppingListModel.fromJson(r as Map<String, dynamic>))
           .toList();
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<ShoppingListModel?> getById(String id) async {
+    try {
+      final row =
+          await _client.from('shopping_lists').select().eq('id', id).maybeSingle();
+      return row == null ? null : ShoppingListModel.fromJson(row);
     } catch (e) {
       throw ServerException(e.toString());
     }

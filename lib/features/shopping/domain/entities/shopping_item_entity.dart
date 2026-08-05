@@ -30,6 +30,7 @@ class ShoppingItemEntity extends Equatable {
   final double? purchasedPrice;
   final bool purchased;
   final int sortOrder;
+  final DateTime updatedAt;
 
   const ShoppingItemEntity({
     required this.id,
@@ -38,6 +39,7 @@ class ShoppingItemEntity extends Equatable {
     required this.quantity,
     required this.purchased,
     required this.sortOrder,
+    required this.updatedAt,
     this.categoryId,
     this.unit,
     this.brand,
@@ -60,5 +62,6 @@ class ShoppingItemEntity extends Equatable {
         purchasedPrice,
         purchased,
         sortOrder,
+        updatedAt,
       ];
 }

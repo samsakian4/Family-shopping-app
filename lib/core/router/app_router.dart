@@ -19,6 +19,7 @@ import 'package:family_shopping_app/features/family/presentation/pages/family_me
 import 'package:family_shopping_app/features/family/presentation/pages/family_invite_page.dart';
 import 'package:family_shopping_app/features/shopping/presentation/pages/shopping_lists_page.dart';
 import 'package:family_shopping_app/features/shopping/presentation/pages/trash_page.dart';
+import 'package:family_shopping_app/features/shopping/presentation/pages/conflicts_page.dart';
 import 'package:family_shopping_app/features/shopping/presentation/pages/list_detail_page.dart';
 
 part 'app_router.g.dart';
@@ -104,6 +105,10 @@ GoRouter appRouter(Ref ref) {
       GoRoute(
         path: RoutePaths.listsTrash,
         builder: (context, state) => const TrashPage(),
+      ),
+      GoRoute(
+        path: RoutePaths.listsConflicts,
+        builder: (context, state) => const ConflictsPage(),
       ),
       GoRoute(
         path: RoutePaths.listDetail,

@@ -33,4 +33,4 @@ class SyncQueueEntry {
   late DateTime updatedAt;
 }
 
-enum SyncQueueStatus { pending, syncing, synced, failed }
+enum SyncQueueStatus { pending, syncing, synced, failed, conflict }

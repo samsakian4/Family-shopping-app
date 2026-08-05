@@ -26,6 +26,7 @@ class ShoppingItemModel extends ShoppingItemEntity {
     required super.quantity,
     required super.purchased,
     required super.sortOrder,
+    required super.updatedAt,
     super.categoryId,
     super.unit,
     super.brand,
@@ -48,6 +49,7 @@ class ShoppingItemModel extends ShoppingItemEntity {
       purchasedPrice: (json['purchased_price'] as num?)?.toDouble(),
       purchased: json['purchased'] as bool,
       sortOrder: json['sort_order'] as int,
+      updatedAt: DateTime.parse(json['updated_at'] as String),
     );
   }
 }
