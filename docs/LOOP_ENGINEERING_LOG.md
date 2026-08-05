@@ -246,6 +246,47 @@ Isar کار می‌کند (بدون واسطه قابل mock کردن ساده)�
 
 ---
 
+## فاز ۱۱ — Testing
+
+طبق `28_TEST_PLAN.md` و `20_TESTING_STRATEGY.md`. این فاز عمدتاً «تکمیل
+پوشش تست‌های واحد/ویجت» بود، نه نوشتن از صفر — چون طبق رویه Loop
+Engineering در تمام فازهای قبل، هر فاز حداقل یک تست واحد گرفته بود.
+
+### پوشش نهایی (۱۲ فایل، ۴۶ کیس تست)
+
+| حوزه | فایل | چه چیزی پوشش داده می‌شود |
+|---|---|---|
+| Auth | `sign_up_usecase_test.dart` | اعتبارسنجی ایمیل/رمز/نام، نرمال‌سازی، تحویل به Repository |
+| Auth | `sign_in_usecase_test.dart` | رد ورودی خالی، نرمال‌سازی ایمیل |
+| Auth | `reset_password_usecase_test.dart` | رد ایمیل نامعتبر، نرمال‌سازی |
+| Family | `family_usecases_test.dart` | ساخت/پیوستن خانواده — رد ورودی نامعتبر، trim |
+| Settings | `upload_avatar_usecase_test.dart` | رد حجم >۵MB، رد فرمت نامعتبر، مسیر موفق |
+| Shopping | `shopping_list_usecases_test.dart` | ساخت/تغییرنام لیست — قوانین اعتبارسنجی |
+| Shopping | `shopping_item_usecases_test.dart` | افزودن/ویرایش آیتم — قوانین اعتبارسنجی |
+| Shopping | `search_product_names_usecase_test.dart` | تفویض query، ورودی خالی |
+| Core/Local | `local_cache_mapping_test.dart` | رفت‌وبرگشت Entity↔Isar Model بدون از دست دادن داده |
+| Core/Sync | `sync_engine_test.dart` | مسیریابی create/update/delete/mark_purchased، **تشخیص تعارض**، `resolveKeepLocal`/`resolveDiscardLocal`، رفتار آفلاین |
+| Widget | `error_and_empty_state_test.dart` | `AppEmptyState`/`AppErrorView` — نمایش صحیح، اکشن اختیاری |
+| Widget | `app_primary_button_test.dart` | حالت loading دکمه را غیرفعال می‌کند و اسپینر نشان می‌دهد |
+
+### آنچه عمداً پوشش داده نشد (و چرا)
+
+- **Integration Tests واقعی** (طبق `28_TEST_PLAN.md` بخش Integration Testing)
+  نیاز به یک پروژه Supabase تست واقعی + اجرای `flutter test integration_test`
+  دارند — این محیط نه SDK فلاتر دارد نه دسترسی شبکه به Supabase، پس این‌ها
+  در CI شما (`ci.yml`) باید فعال شوند، نه اینجا.
+- Repository ها (لایه Data) مستقیماً تست نشدند — چون DataSource های واقعی‌شان
+  به Supabase وصل می‌شوند؛ رفتارشان از طریق Use Case ها (که Repository را
+  Mock می‌کنند) و از طریق منطق داخلی `SyncEngine`/`LocalCache` که Mock/Fake
+  قابل تست دارند پوشش داده شده.
+- Family/Auth usecase های کمتر حیاتی (`LeaveFamilyUseCase`,
+  `RemoveMemberUseCase`, `UpdateProfileUseCase`) تست مستقیم ندارند —
+  منطق‌شان trivial pass-through است (بدون اعتبارسنجی خاص)، ریسک کمی دارند.
+- `flutter analyze` / `flutter test` واقعی هرگز در این محیط اجرا نشد
+  (نبود SDK) — تنها راه تأیید قطعی، اجرای CI شماست.
+
+---
+
 ## فاز ۱–۳ (بازبینی گذشته‌نگر خلاصه)
 
 در زمان ساخت فازهای ۱ تا ۳ این لاگ هنوز وجود نداشت. بازبینی خلاصه انجام‌شده:

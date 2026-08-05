@@ -19,7 +19,7 @@
 - [x] Phase 8 — Synchronization ✅ (شامل تشخیص تعارض واقعی — جزئیات در Loop Engineering Log)
 - [x] Phase 9 — Basic Search ✅ (این فاز)
 - [x] Phase 10 — UI Polish ✅ (این فاز — بدون Bottom Nav کامل، جزئیات در Loop Engineering Log)
-- [ ] Phase 11 — Testing
+- [x] Phase 11 — Testing ✅ (این فاز — ۴۶ کیس تست در ۱۲ فایل، جزئیات در Loop Engineering Log)
 - [ ] Phase 12 — Documentation
 
 ## چیزی که در فاز ۱ ساخته شد
@@ -180,7 +180,15 @@ Sync، Retry، تشخیص/حل تعارض طبق `07_SYNC_ENGINE.md`).
 - ⚠️ Bottom Navigation واقعی و انیمیشن‌های Shared Transition هنوز پیاده
   نشده — جزئیات در `docs/LOOP_ENGINEERING_LOG.md`
 
+## چیزی که در فاز ۱۱ (Testing) ساخته شد
+
+- تکمیل پوشش تست واحد برای Auth (SignIn/ResetPassword)، Settings
+  (UploadAvatar) و اولین تست‌های Widget (`AppPrimaryButton`)
+- مجموع نهایی: **۱۲ فایل تست، ۴۶ کیس** (فهرست کامل در Loop Engineering Log)
+- ⚠️ Integration Tests واقعی (نیازمند پروژه Supabase تست) خارج از توان این
+  محیط بود — باید در CI شما اجرا شود
+
 ## مرحله بعد
 
-فاز ۱۱ (Testing) — تکمیل پوشش تست (Widget/Integration)، طبق
-`docs/28_TEST_PLAN.md` و `docs/20_TESTING_STRATEGY.md`.
+فاز ۱۲ (Documentation) — همگام‌سازی نهایی مستندات با پیاده‌سازی، طبق
+`docs/35_MILESTONE_1.md` Phase 12 — آخرین فاز Milestone 1.
