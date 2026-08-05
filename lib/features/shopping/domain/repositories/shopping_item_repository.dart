@@ -35,4 +35,8 @@ abstract class ShoppingItemRepository {
   /// Realtime item list for a shopping list (04_SYSTEM_ARCHITECTURE.md -
   /// Realtime Architecture: "Product added/updated/deleted").
   Stream<List<ShoppingItemEntity>> watchItems({required String shoppingListId});
+
+  /// Local-only instant autocomplete (17_PRODUCT_SEARCH_AND_AUTOCOMPLETE.md
+  /// - Level 1: Local Cache). Always available, even offline.
+  Future<List<String>> searchProductNames(String query);
 }

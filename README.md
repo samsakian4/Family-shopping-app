@@ -17,13 +17,7 @@
 - [x] Phase 6 — Shopping Items ✅
 - [x] Phase 7 — Local Database ✅
 - [x] Phase 8 — Synchronization ✅ (شامل تشخیص تعارض واقعی — جزئیات در Loop Engineering Log)
-- [ ] Phase 9 — Basic Search
-- [ ] Phase 4 — Family System
-- [ ] Phase 5 — Shopping Lists
-- [ ] Phase 6 — Shopping Items
-- [ ] Phase 7 — Local Database (Isar)
-- [ ] Phase 8 — Synchronization
-- [ ] Phase 9 — Basic Search
+- [x] Phase 9 — Basic Search ✅ (این فاز)
 - [ ] Phase 10 — UI Polish
 - [ ] Phase 11 — Testing
 - [ ] Phase 12 — Documentation
@@ -169,7 +163,15 @@ Sync، Retry، تشخیص/حل تعارض طبق `07_SYNC_ENGINE.md`).
 - ⚠️ Merge خودکار فیلد-به-فیلد و Exponential Backoff کامل هنوز پیاده
   نشده — جزئیات در `docs/LOOP_ENGINEERING_LOG.md`
 
+## چیزی که در فاز ۹ (Basic Search) ساخته شد
+
+- جستجوی محلی/آفلاین Level 1 (`ShoppingItemLocalCache.searchItemNames`):
+  روی نام محصولاتی که کاربر در هر لیستی وارد کرده، بدون کاتالوگ محصول یا AI
+- Autocomplete در bottom sheet «افزودن محصول» با debounce ۳۰۰ میلی‌ثانیه‌ای
+  طبق `AppConstants.searchDebounce` — نتایج به‌صورت چیپ قابل‌کلیک
+- کاملاً آفلاین کار می‌کند (بدون نیاز به شبکه)
+
 ## مرحله بعد
 
-فاز ۹ (Basic Search) — جستجوی محصول و Autocomplete، طبق
-`docs/03_FEATURE_LIST.md` (FT-030/FT-031) و `docs/17_PRODUCT_SEARCH_AND_AUTOCOMPLETE.md`.
+فاز ۱۰ (UI Polish) — تکمیل Dashboard واقعی، Dark Mode، Empty/Loading States
+یکپارچه، طبق `docs/09_DESIGN_SYSTEM.md` و `docs/25_UI_UX_DESIGN_SYSTEM.md`.

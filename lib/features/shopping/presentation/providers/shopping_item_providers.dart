@@ -14,6 +14,7 @@ import 'package:family_shopping_app/features/shopping/domain/repositories/shoppi
 import 'package:family_shopping_app/features/shopping/domain/usecases/add_item_usecase.dart';
 import 'package:family_shopping_app/features/shopping/domain/usecases/get_categories_usecase.dart';
 import 'package:family_shopping_app/features/shopping/domain/usecases/manage_item_usecases.dart';
+import 'package:family_shopping_app/features/shopping/domain/usecases/search_product_names_usecase.dart';
 import 'package:family_shopping_app/providers/core_providers.dart';
 
 part 'shopping_item_providers.g.dart';
@@ -76,6 +77,10 @@ SetPurchasedUseCase setPurchasedUseCase(Ref ref) =>
 @riverpod
 GetCategoriesUseCase getCategoriesUseCase(Ref ref) =>
     GetCategoriesUseCase(ref.watch(categoryRepositoryProvider));
+
+@riverpod
+SearchProductNamesUseCase searchProductNamesUseCase(Ref ref) =>
+    SearchProductNamesUseCase(ref.watch(shoppingItemRepositoryProvider));
 
 @riverpod
 Future<List<CategoryEntity>> categories(Ref ref) async {

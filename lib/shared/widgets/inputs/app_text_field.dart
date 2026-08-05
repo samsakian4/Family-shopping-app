@@ -8,6 +8,7 @@ class AppTextField extends StatelessWidget {
   final TextInputType keyboardType;
   final String? errorText;
   final IconData? prefixIcon;
+  final ValueChanged<String>? onChanged;
 
   const AppTextField({
     super.key,
@@ -17,6 +18,7 @@ class AppTextField extends StatelessWidget {
     this.keyboardType = TextInputType.text,
     this.errorText,
     this.prefixIcon,
+    this.onChanged,
   });
 
   @override
@@ -25,6 +27,7 @@ class AppTextField extends StatelessWidget {
       controller: controller,
       obscureText: obscureText,
       keyboardType: keyboardType,
+      onChanged: onChanged,
       textDirection: TextDirection.ltr, // emails/passwords stay LTR
       decoration: InputDecoration(
         labelText: label,

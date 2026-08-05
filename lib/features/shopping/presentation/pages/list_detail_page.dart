@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:family_shopping_app/core/constants/app_constants.dart';
 import 'package:family_shopping_app/core/constants/app_spacing.dart';
 import 'package:family_shopping_app/features/shopping/domain/entities/shopping_item_entity.dart';
 import 'package:family_shopping_app/features/shopping/presentation/providers/shopping_item_controller.dart';
@@ -77,84 +80,139 @@ class ListDetailPage extends ConsumerWidget {
   }
 
   void _showAddItemSheet(BuildContext context, WidgetRef ref) {
-    final nameController = TextEditingController();
-    final quantityController = TextEditingController(text: '1');
-    final priceController = TextEditingController();
-    String? selectedCategoryId;
-
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      builder: (ctx) => Padding(
-        padding: EdgeInsets.only(
-          left: AppSpacing.lg,
-          right: AppSpacing.lg,
-          top: AppSpacing.lg,
-          bottom: MediaQuery.of(ctx).viewInsets.bottom + AppSpacing.lg,
-        ),
-        child: Consumer(
-          builder: (ctx, ref, _) {
-            final categoriesAsync = ref.watch(categoriesProvider);
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const Text('افزودن محصول', style: TextStyle(fontWeight: FontWeight.bold)),
-                const SizedBox(height: AppSpacing.md),
-                AppTextField(controller: nameController, label: 'نام محصول'),
-                const SizedBox(height: AppSpacing.sm),
-                Row(
-                  children: [
-                    Expanded(
-                      child: AppTextField(
-                        controller: quantityController,
-                        label: 'تعداد',
-                        keyboardType: TextInputType.number,
-                      ),
-                    ),
-                    const SizedBox(width: AppSpacing.sm),
-                    Expanded(
-                      child: AppTextField(
-                        controller: priceController,
-                        label: 'قیمت تخمینی (اختیاری)',
-                        keyboardType: TextInputType.number,
-                      ),
-                    ),
-                  ],
+      builder: (ctx) => _AddItemSheet(listId: listId),
+    );
+  }
+}
+
+/// Extracted as its own stateful widget so the search debounce
+/// (17_PRODUCT_SEARCH_AND_AUTOCOMPLETE.md - "Recommended: 300ms debounce")
+/// has somewhere to live without leaking Timers into the page state.
+class _AddItemSheet extends ConsumerStatefulWidget {
+  final String listId;
+  const _AddItemSheet({required this.listId});
+
+  @override
+  ConsumerState<_AddItemSheet> createState() => _AddItemSheetState();
+}
+
+class _AddItemSheetState extends ConsumerState<_AddItemSheet> {
+  final _nameController = TextEditingController();
+  final _quantityController = TextEditingController(text: '1');
+  final _priceController = TextEditingController();
+  String? _selectedCategoryId;
+
+  Timer? _debounce;
+  List<String> _suggestions = [];
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    _nameController.dispose();
+    _quantityController.dispose();
+    _priceController.dispose();
+    super.dispose();
+  }
+
+  void _onNameChanged(String query) {
+    _debounce?.cancel();
+    _debounce = Timer(AppConstants.searchDebounce, () async {
+      final results = await ref.read(searchProductNamesUseCaseProvider)(query);
+      if (mounted) setState(() => _suggestions = results);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final categoriesAsync = ref.watch(categoriesProvider);
+
+    return Padding(
+      padding: EdgeInsets.only(
+        left: AppSpacing.lg,
+        right: AppSpacing.lg,
+        top: AppSpacing.lg,
+        bottom: MediaQuery.of(context).viewInsets.bottom + AppSpacing.lg,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const Text('افزودن محصول', style: TextStyle(fontWeight: FontWeight.bold)),
+          const SizedBox(height: AppSpacing.md),
+          AppTextField(
+            controller: _nameController,
+            label: 'نام محصول',
+            onChanged: _onNameChanged,
+          ),
+          if (_suggestions.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(top: AppSpacing.xs),
+              child: Wrap(
+                spacing: AppSpacing.xs,
+                children: _suggestions
+                    .map((s) => ActionChip(
+                          label: Text(s),
+                          onPressed: () {
+                            _nameController.text = s;
+                            setState(() => _suggestions = []);
+                          },
+                        ))
+                    .toList(),
+              ),
+            ),
+          const SizedBox(height: AppSpacing.sm),
+          Row(
+            children: [
+              Expanded(
+                child: AppTextField(
+                  controller: _quantityController,
+                  label: 'تعداد',
+                  keyboardType: TextInputType.number,
                 ),
-                const SizedBox(height: AppSpacing.sm),
-                categoriesAsync.when(
-                  loading: () => const SizedBox.shrink(),
-                  error: (_, __) => const SizedBox.shrink(),
-                  data: (categories) => DropdownButtonFormField<String>(
-                    value: selectedCategoryId,
-                    decoration: const InputDecoration(labelText: 'دسته‌بندی (اختیاری)'),
-                    items: categories
-                        .map((c) => DropdownMenuItem(value: c.id, child: Text(c.name)))
-                        .toList(),
-                    onChanged: (v) => selectedCategoryId = v,
-                  ),
+              ),
+              const SizedBox(width: AppSpacing.sm),
+              Expanded(
+                child: AppTextField(
+                  controller: _priceController,
+                  label: 'قیمت تخمینی (اختیاری)',
+                  keyboardType: TextInputType.number,
                 ),
-                const SizedBox(height: AppSpacing.lg),
-                FilledButton(
-                  onPressed: () {
-                    final quantity = double.tryParse(quantityController.text) ?? 1;
-                    final price = double.tryParse(priceController.text);
-                    Navigator.pop(ctx);
-                    ref.read(shoppingItemControllerProvider.notifier).addItem(
-                          shoppingListId: listId,
-                          name: nameController.text,
-                          quantity: quantity,
-                          categoryId: selectedCategoryId,
-                          estimatedPrice: price,
-                        );
-                  },
-                  child: const Text('افزودن'),
-                ),
-              ],
-            );
-          },
-        ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          categoriesAsync.when(
+            loading: () => const SizedBox.shrink(),
+            error: (_, __) => const SizedBox.shrink(),
+            data: (categories) => DropdownButtonFormField<String>(
+              value: _selectedCategoryId,
+              decoration: const InputDecoration(labelText: 'دسته‌بندی (اختیاری)'),
+              items: categories
+                  .map((c) => DropdownMenuItem(value: c.id, child: Text(c.name)))
+                  .toList(),
+              onChanged: (v) => setState(() => _selectedCategoryId = v),
+            ),
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          FilledButton(
+            onPressed: () {
+              final quantity = double.tryParse(_quantityController.text) ?? 1;
+              final price = double.tryParse(_priceController.text);
+              Navigator.pop(context);
+              ref.read(shoppingItemControllerProvider.notifier).addItem(
+                    shoppingListId: widget.listId,
+                    name: _nameController.text,
+                    quantity: quantity,
+                    categoryId: _selectedCategoryId,
+                    estimatedPrice: price,
+                  );
+            },
+            child: const Text('افزودن'),
+          ),
+        ],
       ),
     );
   }

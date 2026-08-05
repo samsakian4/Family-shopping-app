@@ -268,4 +268,9 @@ class ShoppingItemRepositoryImpl implements ShoppingItemRepository {
     );
     return const Right(null);
   }
+
+  @override
+  Future<List<String>> searchProductNames(String query) {
+    return _cache.searchItemNames(query);
+  }
 }
