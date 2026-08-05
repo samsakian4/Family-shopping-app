@@ -10,6 +10,7 @@ import 'package:family_shopping_app/features/shopping/presentation/providers/sho
 import 'package:family_shopping_app/features/shopping/presentation/providers/shopping_item_providers.dart';
 import 'package:family_shopping_app/features/shopping/presentation/providers/shopping_list_providers.dart';
 import 'package:family_shopping_app/shared/widgets/inputs/app_text_field.dart';
+import 'package:family_shopping_app/shared/widgets/errors/app_empty_state.dart';
 
 /// List Detail — the main shopping workspace (10_UI_UX.md - List Detail
 /// Screen, FT-023).
@@ -52,7 +53,10 @@ class ListDetailPage extends ConsumerWidget {
         error: (e, _) => Center(child: Text(e.toString())),
         data: (items) {
           if (items.isEmpty) {
-            return const Center(child: Text('اولین خرید خود را اضافه کنید'));
+            return const AppEmptyState(
+              icon: Icons.add_shopping_cart_outlined,
+              message: 'اولین خرید خود را اضافه کنید',
+            );
           }
           final pending = items.where((i) => !i.purchased).toList();
           final purchased = items.where((i) => i.purchased).toList();

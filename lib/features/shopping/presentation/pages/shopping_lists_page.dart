@@ -11,6 +11,8 @@ import 'package:family_shopping_app/features/family/presentation/providers/famil
 import 'package:family_shopping_app/features/shopping/domain/entities/shopping_list_entity.dart';
 import 'package:family_shopping_app/features/shopping/presentation/providers/shopping_list_controller.dart';
 import 'package:family_shopping_app/features/shopping/presentation/providers/shopping_list_providers.dart';
+import 'package:family_shopping_app/shared/widgets/errors/app_empty_state.dart';
+import 'package:family_shopping_app/shared/widgets/errors/app_error_view.dart';
 import 'package:family_shopping_app/shared/widgets/inputs/app_text_field.dart';
 
 /// Shopping Lists screen (10_UI_UX.md - Shopping Lists Screen, FT-020/021).
@@ -90,7 +92,9 @@ class _ShoppingListsPageState extends ConsumerState<ShoppingListsPage>
       ),
       body: listsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text(e.toString())),
+        error: (e, _) => AppErrorView(
+          onRetry: () => ref.invalidate(myShoppingListsProvider),
+        ),
         data: (lists) {
           final personal = lists
               .where((l) => l.type == ShoppingListType.personal && !l.archived)
@@ -181,7 +185,7 @@ class _ListView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     if (lists.isEmpty) {
-      return Center(child: Text(emptyText));
+      return AppEmptyState(icon: Icons.shopping_basket_outlined, message: emptyText);
     }
     return ListView.separated(
       padding: const EdgeInsets.all(AppSpacing.md),

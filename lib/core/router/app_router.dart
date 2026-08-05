@@ -7,7 +7,7 @@ import 'package:family_shopping_app/core/router/auth_state_provider.dart';
 import 'package:family_shopping_app/core/router/route_paths.dart';
 import 'package:family_shopping_app/features/dashboard/presentation/pages/splash_page.dart';
 import 'package:family_shopping_app/features/dashboard/presentation/pages/not_found_page.dart';
-import 'package:family_shopping_app/features/dashboard/presentation/pages/home_page_placeholder.dart';
+import 'package:family_shopping_app/features/dashboard/presentation/pages/dashboard_page.dart';
 import 'package:family_shopping_app/features/auth/presentation/pages/welcome_page.dart';
 import 'package:family_shopping_app/features/auth/presentation/pages/login_page.dart';
 import 'package:family_shopping_app/features/auth/presentation/pages/register_page.dart';
@@ -76,7 +76,7 @@ GoRouter appRouter(Ref ref) {
       ),
       GoRoute(
         path: RoutePaths.home,
-        builder: (context, state) => const HomePagePlaceholder(),
+        builder: (context, state) => const DashboardPage(),
       ),
       GoRoute(
         path: RoutePaths.settings,

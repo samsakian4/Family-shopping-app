@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:family_shopping_app/core/constants/app_spacing.dart';
 import 'package:family_shopping_app/features/shopping/presentation/providers/shopping_list_controller.dart';
 import 'package:family_shopping_app/features/shopping/presentation/providers/shopping_list_providers.dart';
+import 'package:family_shopping_app/shared/widgets/errors/app_empty_state.dart';
 
 /// Trash screen (FT-025: 30-day retention, restore, permanent delete).
 class TrashPage extends ConsumerWidget {
@@ -20,7 +21,10 @@ class TrashPage extends ConsumerWidget {
         error: (e, _) => Center(child: Text(e.toString())),
         data: (lists) {
           if (lists.isEmpty) {
-            return const Center(child: Text('سطل زباله خالی است'));
+            return const AppEmptyState(
+              icon: Icons.delete_outline,
+              message: 'سطل زباله خالی است',
+            );
           }
           return ListView.separated(
             padding: const EdgeInsets.all(AppSpacing.md),

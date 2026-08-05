@@ -18,7 +18,7 @@
 - [x] Phase 7 — Local Database ✅
 - [x] Phase 8 — Synchronization ✅ (شامل تشخیص تعارض واقعی — جزئیات در Loop Engineering Log)
 - [x] Phase 9 — Basic Search ✅ (این فاز)
-- [ ] Phase 10 — UI Polish
+- [x] Phase 10 — UI Polish ✅ (این فاز — بدون Bottom Nav کامل، جزئیات در Loop Engineering Log)
 - [ ] Phase 11 — Testing
 - [ ] Phase 12 — Documentation
 
@@ -171,7 +171,16 @@ Sync، Retry، تشخیص/حل تعارض طبق `07_SYNC_ENGINE.md`).
   طبق `AppConstants.searchDebounce` — نتایج به‌صورت چیپ قابل‌کلیک
 - کاملاً آفلاین کار می‌کند (بدون نیاز به شبکه)
 
+## چیزی که در فاز ۱۰ (UI Polish) ساخته شد
+
+- `DashboardPage` واقعی: خلاصه لیست‌های فعال + برآورد هزینه، وضعیت خانواده،
+  دسترسی سریع (طبق FT-060)
+- ویجت‌های مشترک `AppEmptyState`/`AppErrorView` طبق Component Library —
+  در صفحات لیست‌ها/جزئیات لیست/سطل زباله جایگزین متن خام شدند
+- ⚠️ Bottom Navigation واقعی و انیمیشن‌های Shared Transition هنوز پیاده
+  نشده — جزئیات در `docs/LOOP_ENGINEERING_LOG.md`
+
 ## مرحله بعد
 
-فاز ۱۰ (UI Polish) — تکمیل Dashboard واقعی، Dark Mode، Empty/Loading States
-یکپارچه، طبق `docs/09_DESIGN_SYSTEM.md` و `docs/25_UI_UX_DESIGN_SYSTEM.md`.
+فاز ۱۱ (Testing) — تکمیل پوشش تست (Widget/Integration)، طبق
+`docs/28_TEST_PLAN.md` و `docs/20_TESTING_STRATEGY.md`.
