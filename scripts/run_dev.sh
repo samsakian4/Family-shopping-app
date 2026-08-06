@@ -12,8 +12,8 @@
 
 set -e
 
-SUPABASE_URL="https://hvgnlmcfpxkkblyjdvyw.supabase.co"
-SUPABASE_ANON_KEY="sb_publishable_t52ZEeJqNJbFl-BKKRqe-A_bj-JOkWl"
+SUPABASE_URL="https://ybzjwtyhvvqyrbfungdu.supabase.co"
+SUPABASE_ANON_KEY="sb_publishable_QT157jLQT90SvWVt1v7s-g_SIyCJFw2"
 
 flutter run \
   --dart-define=SUPABASE_URL="$SUPABASE_URL" \
