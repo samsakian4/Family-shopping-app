@@ -16,22 +16,51 @@ jobs:
         with:
           channel: "stable"
 
+      # Each step below runs its command as the condition of an `if` (so
+      # the default `set -e -o pipefail` shell doesn't abort the script
+      # the instant the command fails, before we get to react) and, on
+      # failure, re-emits every output line as a `::error::` annotation.
+      # GitHub's raw job logs are only reachable via a redirect to Azure
+      # Blob Storage, which tooling outside a browser/CI context often
+      # cannot follow — annotations are readable through the plain REST
+      # API (GET /check-runs/{id}/annotations), so this keeps failures
+      # diagnosable without needing the blob-storage log stream.
       - name: Install dependencies
-        run: flutter pub get
+        run: |
+          if ! flutter pub get 2>&1 | tee step.log; then
+            while IFS= read -r line; do echo "::error::$line"; done < step.log
+            exit 1
+          fi
 
       - name: Generate code
-        run: dart run build_runner build --delete-conflicting-outputs
+        run: |
+          if ! dart run build_runner build --delete-conflicting-outputs 2>&1 | tee step.log; then
+            while IFS= read -r line; do echo "::error::$line"; done < step.log
+            exit 1
+          fi
 
       - name: Verify formatting
-        run: dart format --output=none --set-exit-if-changed .
+        run: |
+          if ! dart format --output=none --set-exit-if-changed . 2>&1 | tee step.log; then
+            while IFS= read -r line; do echo "::error::$line"; done < step.log
+            exit 1
+          fi
 
       - name: Analyze
-        run: flutter analyze
+        run: |
+          if ! flutter analyze 2>&1 | tee step.log; then
+            while IFS= read -r line; do echo "::error::$line"; done < step.log
+            exit 1
+          fi
 
       - name: Run unit + widget tests
-        run: flutter test --coverage
+        run: |
+          if ! flutter test --coverage 2>&1 | tee step.log; then
+            while IFS= read -r line; do echo "::error::$line"; done < step.log
+            exit 1
+          fi
 
-      # Integration tests are enabled once the first feature (Auth) lands
-      # and a test Supabase project is available in CI secrets.
+      # Integration tests are enabled once a test Supabase project is
+      # available in CI secrets.
       # - name: Run integration tests
       #   run: flutter test integration_test
