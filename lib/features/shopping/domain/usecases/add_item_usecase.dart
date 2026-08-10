@@ -16,6 +16,7 @@ class AddItemParams extends Equatable {
   final String? brand;
   final String? notes;
   final double? estimatedPrice;
+  final String? productId;
 
   const AddItemParams({
     required this.shoppingListId,
@@ -26,11 +27,21 @@ class AddItemParams extends Equatable {
     this.brand,
     this.notes,
     this.estimatedPrice,
+    this.productId,
   });
 
   @override
-  List<Object?> get props =>
-      [shoppingListId, name, quantity, unit, categoryId, brand, notes, estimatedPrice];
+  List<Object?> get props => [
+        shoppingListId,
+        name,
+        quantity,
+        unit,
+        categoryId,
+        brand,
+        notes,
+        estimatedPrice,
+        productId,
+      ];
 }
 
 class AddItemUseCase implements UseCase<ShoppingItemEntity, AddItemParams> {
@@ -54,6 +65,7 @@ class AddItemUseCase implements UseCase<ShoppingItemEntity, AddItemParams> {
       brand: params.brand,
       notes: params.notes,
       estimatedPrice: params.estimatedPrice,
+      productId: params.productId,
     );
   }
 }

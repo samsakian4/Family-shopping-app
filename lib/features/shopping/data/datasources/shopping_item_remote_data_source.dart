@@ -14,6 +14,7 @@ abstract class ShoppingItemRemoteDataSource {
     String? brand,
     String? notes,
     double? estimatedPrice,
+    String? productId,
   });
 
   Future<void> updateItem({
@@ -56,6 +57,7 @@ class ShoppingItemRemoteDataSourceImpl implements ShoppingItemRemoteDataSource {
     String? brand,
     String? notes,
     double? estimatedPrice,
+    String? productId,
   }) async {
     try {
       final row = await _client
@@ -70,6 +72,7 @@ class ShoppingItemRemoteDataSourceImpl implements ShoppingItemRemoteDataSource {
             'brand': brand,
             'notes': notes,
             'estimated_price': estimatedPrice,
+            'product_id': productId,
           })
           .select()
           .single();

@@ -55,6 +55,14 @@ jobs:
             exit 1
           fi
 
+      - name: Debug build output
+        run: |
+          echo "PWD: $(pwd)"
+          ls -la build/ 2>&1 | tee step.log || true
+          echo "--- build/web ---"
+          ls -la build/web 2>&1 | tee -a step.log || true
+          while IFS= read -r line; do echo "::notice::$line"; done < step.log
+
       - uses: actions/upload-pages-artifact@v3
         with:
           path: build/web

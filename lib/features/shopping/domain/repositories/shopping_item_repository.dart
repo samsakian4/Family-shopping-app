@@ -11,6 +11,7 @@ abstract class ShoppingItemRepository {
     String? brand,
     String? notes,
     double? estimatedPrice,
+    String? productId,
   });
 
   ResultFuture<void> updateItem({

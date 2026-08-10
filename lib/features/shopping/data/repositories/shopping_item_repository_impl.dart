@@ -53,6 +53,7 @@ class ShoppingItemRepositoryImpl implements ShoppingItemRepository {
     String? brand,
     String? notes,
     double? estimatedPrice,
+    String? productId,
   }) async {
     final online = await _networkInfo.isConnected;
     final id = const Uuid().v4();
@@ -69,6 +70,7 @@ class ShoppingItemRepositoryImpl implements ShoppingItemRepository {
           brand: brand,
           notes: notes,
           estimatedPrice: estimatedPrice,
+          productId: productId,
         );
         await _cache.upsert(created);
         return Right(created);
@@ -78,6 +80,11 @@ class ShoppingItemRepositoryImpl implements ShoppingItemRepository {
         return const Left(UnknownFailure());
       }
     }
+
+    // Offline: not linked to a catalog product_id yet — the item is
+    // still fully usable, it just won't count toward catalog purchase
+    // history/favorites until synced (documented limitation, consistent
+    // with the rest of the offline-write scope from Milestone 1 Phase 8).
 
     final entity = ShoppingItemEntity(
       id: id,
