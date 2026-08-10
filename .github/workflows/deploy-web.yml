@@ -54,6 +54,10 @@ jobs:
             while IFS= read -r line; do echo "::error::$line"; done < step.log
             exit 1
           fi
+          # Always surface the output, even on "success" - a previous run
+          # reported this step as successful yet build/ never got created,
+          # so something here needs visibility beyond the error-only path.
+          while IFS= read -r line; do echo "::notice::$line"; done < step.log
 
       - name: Debug build output
         run: |
