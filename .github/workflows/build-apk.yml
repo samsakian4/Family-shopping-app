@@ -20,47 +20,60 @@ jobs:
         with:
           channel: "stable"
 
+      # Shared diagnostic helper: on failure, collapse the whole log into
+      # ONE annotation (GitHub caps annotations at 10 per step, so the
+      # earlier line-per-annotation approach silently dropped most of a
+      # verbose Gradle failure). Escaping order matters: % first, then
+      # \r, then \n, per the workflow-command escaping rules.
       - name: Install dependencies
         run: |
           if ! flutter pub get 2>&1 | tee step.log; then
-            while IFS= read -r line; do echo "::error::$line"; done < step.log
+            msg=$(tail -c 6000 step.log | sed ':a;N;$!ba;s/%/%25/g;s/\r/%0D/g;s/\n/%0A/g')
+            echo "::error::$msg"
             exit 1
           fi
 
       - name: Generate code
         run: |
           if ! dart run build_runner build --delete-conflicting-outputs 2>&1 | tee step.log; then
-            while IFS= read -r line; do echo "::error::$line"; done < step.log
+            msg=$(tail -c 6000 step.log | sed ':a;N;$!ba;s/%/%25/g;s/\r/%0D/g;s/\n/%0A/g')
+            echo "::error::$msg"
             exit 1
           fi
 
-      # The android/ folder was hand-scaffolded (no local Flutter SDK was
-      # available to run `flutter create`), so it has no committed Gradle
-      # wrapper jar — generate one fresh using the Gradle already
-      # installed on the runner instead of trying to hand-author a binary.
       - name: Generate Gradle wrapper
         run: |
           cd android
           if ! gradle wrapper --gradle-version 8.7 2>&1 | tee ../step.log; then
-            while IFS= read -r line; do echo "::error::$line"; done < ../step.log
+            msg=$(tail -c 6000 ../step.log | sed ':a;N;$!ba;s/%/%25/g;s/\r/%0D/g;s/\n/%0A/g')
+            echo "::error::$msg"
             exit 1
           fi
 
       # This project's anon/publishable Supabase key — safe to embed, see
       # scripts/run_dev.sh for why.
+      #
+      # IMPORTANT: don't trust flutter build's own exit code alone — a
+      # previous run showed this step reported "success" while Gradle had
+      # actually failed underneath it and no APK existed. Explicitly
+      # verify the output file exists regardless of the reported exit code.
       - name: Build debug APK
         run: |
-          if ! flutter build apk --debug \
+          flutter build apk --debug \
               --dart-define=SUPABASE_URL="https://ybzjwtyhvvqyrbfungdu.supabase.co" \
               --dart-define=SUPABASE_ANON_KEY="sb_publishable_QT157jLQT90SvWVt1v7s-g_SIyCJFw2" \
-              --dart-define=FLAVOR=development 2>&1 | tee step.log; then
-            while IFS= read -r line; do echo "::error::$line"; done < step.log
+              --dart-define=FLAVOR=development 2>&1 | tee step.log
+          build_status=${PIPESTATUS[0]}
+
+          if [ "$build_status" -ne 0 ] || [ ! -f build/app/outputs/flutter-apk/app-debug.apk ]; then
+            msg=$(tail -c 6000 step.log | sed ':a;N;$!ba;s/%/%25/g;s/\r/%0D/g;s/\n/%0A/g')
+            echo "::error::flutter build apk exit=$build_status, apk_exists=$([ -f build/app/outputs/flutter-apk/app-debug.apk ] && echo yes || echo no) — $msg"
             exit 1
           fi
-          while IFS= read -r line; do echo "::notice::$line"; done < step.log
 
       - uses: actions/upload-artifact@v4
         with:
           name: family-shopping-app-debug-apk
           path: build/app/outputs/flutter-apk/app-debug.apk
           retention-days: 14
+          if-no-files-found: error
