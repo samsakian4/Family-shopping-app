@@ -1,24 +1,8 @@
-def localProperties = new Properties()
-def localPropertiesFile = rootProject.file("local.properties")
-if (localPropertiesFile.exists()) {
-    localPropertiesFile.withReader("UTF-8") { reader ->
-        localProperties.load(reader)
-    }
-}
-
-def flutterVersionCode = localProperties.getProperty("flutter.versionCode")
-if (flutterVersionCode == null) {
-    flutterVersionCode = "1"
-}
-
-def flutterVersionName = localProperties.getProperty("flutter.versionName")
-if (flutterVersionName == null) {
-    flutterVersionName = "1.0"
-}
-
 plugins {
     id "com.android.application"
     id "kotlin-android"
+    // The Flutter Gradle Plugin must be applied after the Android and Kotlin
+    // Gradle plugins.
     id "dev.flutter.flutter-gradle-plugin"
 }
 
@@ -41,12 +25,19 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.familyshoppingapp.app"
         // Family Shopping Assistant — Milestone 1 test build (24_README.md).
+        applicationId "com.familyshoppingapp.app"
         minSdkVersion flutter.minSdkVersion
         targetSdkVersion flutter.targetSdkVersion
-        versionCode flutterVersionCode.toInteger()
-        versionName flutterVersionName
+        // versionCode/versionName come from pubspec.yaml's `version:` field
+        // automatically via the Flutter Gradle plugin — no manual
+        // local.properties parsing needed (that's what caused the "only
+        // buildscript{}/pluginManagement{}/plugins{} allowed before
+        // plugins{}" syntax error: this file used to read local.properties
+        // BEFORE its plugins{} block, which Gradle's modern plugins DSL
+        // does not allow).
+        versionCode flutter.versionCode
+        versionName flutter.versionName
     }
 
     buildTypes {
