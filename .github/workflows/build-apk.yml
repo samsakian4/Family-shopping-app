@@ -41,14 +41,39 @@ jobs:
             exit 1
           fi
 
-      - name: Generate Gradle wrapper
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.14"
+
+      # The android/ folder was hand-scaffolded (no local Flutter SDK was
+      # available to run `flutter create`), so there's no committed
+      # gradle-wrapper.jar (a binary this tool can't reliably author).
+      # Also: `gradle wrapper --gradle-version 8.14` was tried first and
+      # did NOT work as expected — Flutter still reported "Gradle version
+      # 8.11.1" afterward, for reasons not fully clear (possibly Flutter's
+      # own tooling re-touching the wrapper files). Switched to a more
+      # direct approach: install the exact Gradle version via the action
+      # above, then make gradlew a thin passthrough to it, removing the
+      # wrapper-jar bootstrap mechanism from the equation entirely. A
+      # gradle-wrapper.properties is still written as a fallback, in case
+      # Flutter's version check reads that file directly rather than
+      # invoking gradlew.
+      - name: Set up gradlew passthrough
         run: |
-          cd android
-          if ! gradle wrapper --gradle-version 8.14 2>&1 | tee ../step.log; then
-            msg=$(tail -c 6000 ../step.log | sed ':a;N;$!ba;s/%/%25/g;s/\r/%0D/g;s/\n/%0A/g')
-            echo "::error::$msg"
-            exit 1
-          fi
+          mkdir -p android/gradle/wrapper
+          cat > android/gradle/wrapper/gradle-wrapper.properties << 'PROPS'
+          distributionBase=GRADLE_USER_HOME
+          distributionPath=wrapper/dists
+          distributionUrl=https\://services.gradle.org/distributions/gradle-8.14-bin.zip
+          zipStoreBase=GRADLE_USER_HOME
+          zipStorePath=wrapper/dists
+          PROPS
+          cat > android/gradlew << 'SCRIPT'
+          #!/usr/bin/env bash
+          exec gradle "$@"
+          SCRIPT
+          chmod +x android/gradlew
+          android/gradlew --version
 
       # This project's anon/publishable Supabase key — safe to embed, see
       # scripts/run_dev.sh for why.
